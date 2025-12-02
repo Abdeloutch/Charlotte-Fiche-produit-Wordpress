@@ -102,8 +102,35 @@ if (! function_exists('elementor_theme_do_location') || ! elementor_theme_do_loc
 
 
     //AJOUTER PRIX DANS BTN PANIER
-    const addToCartBtn = document.querySelector(".single_add_to_cart_button");
+const addToCartBtn = document.querySelector(".single_add_to_cart_button");
 if (!addToCartBtn) return;
+
+// Fonction universelle pour parser les prix
+function parsePrice(raw) {
+    if (!raw) return 0;
+
+    let str = raw
+        .replace(/€/g, "")
+        .replace(/\s/g, "")
+        .trim();
+
+    // Format FR classique : 1 031,40 → 1031.40
+    if (/,/.test(str) && !/\.\d{3}$/.test(str)) {
+        str = str.replace(",", ".");
+    }
+
+    // Format mixte US : 1,031.40 → 1031.40
+    if (/,\d{3}\./.test(str)) {
+        str = str.replace(/,/g, "");
+    }
+
+    // Format mixte inversé : 1.031,400 → 1031.400
+    if (/\.\d{3},/.test(str)) {
+        str = str.replace(/\./g, "").replace(",", ".");
+    }
+
+    return parseFloat(str) || 0;
+}
 
 function updateButtonPrice() {
     const wcpq = document.querySelector(
@@ -115,30 +142,26 @@ function updateButtonPrice() {
     setTimeout(() => {
         let supplementValue = 0;
 
-        // 🟦 CAS 1 : WP-CPO utilise un SELECT
+        // CAS 1 : select
         const wpcpo_select = document.querySelector(".wpcpo-option-form select");
         if (wpcpo_select) {
             supplementValue = Number(wpcpo_select.value) || 0;
         }
 
-        // 🟩 CAS 2 : WP-CPO affiche un prix dans un <label>
+        // CAS 2 : label prix
         else {
             const wpcpo_label_price = document.querySelector(
                 ".wpcpo-option-form label .woocommerce-Price-amount.amount"
             );
 
             if (wpcpo_label_price) {
-                let labelText = wpcpo_label_price.textContent
-                    .replace("€", "")
-                    .trim()
-                    .replace(",", ".");
-                supplementValue = parseFloat(labelText) || 0;
+                const labelText = wpcpo_label_price.textContent;
+                supplementValue = parsePrice(labelText);
             }
         }
 
-        // Prix du produit principal
-        let wcpqText = wcpq.textContent.trim().replace("€", "").trim();
-        const wcpqValue = parseFloat(wcpqText.replace(",", ".")) || 0;
+        // Prix principal
+        const wcpqValue = parsePrice(wcpq.textContent);
 
         // Total
         const total = wcpqValue + supplementValue;
@@ -146,7 +169,7 @@ function updateButtonPrice() {
         // Format FR
         const formatted = total.toFixed(2).replace(".", ",") + " €";
 
-        // Mettre à jour le bouton
+        // Mettre à jour bouton
         addToCartBtn.textContent = `Ajouter au panier - ${formatted}`;
     }, 300);
 }
@@ -154,7 +177,7 @@ function updateButtonPrice() {
 // Exécution initiale
 updateButtonPrice();
 
-// OBSERVATEURS WP-CPO
+// Observateurs
 const simpleContainer = document.querySelector(".wpcpo-total");
 if (simpleContainer) {
     const obsSimple = new MutationObserver(updateButtonPrice);
@@ -167,6 +190,32 @@ if (variableContainer) {
     obsVariable.observe(variableContainer, { childList: true, subtree: true, characterData: true });
 }
 
+
+
+
+
+
+
+
+function cleanWpcpoOptionText() {
+    document.querySelectorAll(".wpcpo-option-form select option").forEach(opt => {
+        let text = opt.textContent;
+
+        // Supprime TOUT ce qui ressemble à "(+XX€)" en fin de texte
+        text = text.replace(/\(\s*\+\s*[\d.,]+\s*€\s*\)\s*$/u, "");
+
+        opt.textContent = text.trim();
+    });
+}
+
+cleanWpcpoOptionText();
+
+// Re-nettoyer si WP-CPO régénère le select
+const wpcpoForm = document.querySelector(".wpcpo-option-form");
+if (wpcpoForm) {
+    const obs = new MutationObserver(cleanWpcpoOptionText);
+    obs.observe(wpcpoForm, { childList: true, subtree: true });
+}
 
   });
 </script>
