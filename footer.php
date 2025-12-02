@@ -103,44 +103,50 @@ if (! function_exists('elementor_theme_do_location') || ! elementor_theme_do_loc
 
     //AJOUTER PRIX DANS BTN PANIER
     const addToCartBtn = document.querySelector(".single_add_to_cart_button");
-if (!addToCartBtn) return;
+    if (!addToCartBtn) return;
 
-function updateButtonPrice() {
-    const wcpq = document.querySelector(
+    function updateButtonPrice() {
+      const wcpq = document.querySelector(
         ".elementor-widget-woocommerce-product-price .woocommerce-Price-amount.amount"
-    );
+      );
 
-    if (!wcpq) return;
+      if (!wcpq) return;
 
-    setTimeout(() => {
+      setTimeout(() => {
         let supplementValue = 0;
 
         // 🟦 CAS 1 : WP-CPO utilise un SELECT
         const wpcpo_select = document.querySelector(".wpcpo-option-form select");
         if (wpcpo_select) {
-            supplementValue = Number(wpcpo_select.value) || 0;
+          supplementValue = Number(wpcpo_select.value) || 0;
         }
 
         // 🟩 CAS 2 : WP-CPO affiche un prix dans un <label>
         else {
-            const wpcpo_label_price = document.querySelector(
-                ".wpcpo-option-form label .woocommerce-Price-amount.amount"
-            );
+          const wpcpo_label_price = document.querySelector(
+            ".wpcpo-option-form label .woocommerce-Price-amount.amount"
+          );
 
-            if (wpcpo_label_price) {
-                let labelText = wpcpo_label_price.textContent
-                    .replace("€", "")
-                    .trim()
-                    .replace(",", ".");
-                supplementValue = parseFloat(labelText) || 0;
-            }
+          if (wpcpo_label_price) {
+            let labelText = wpcpo_label_price.textContent
+              .replace(/\s/g, "")   // retire tous les espaces (important !)
+              .replace("€", "")
+              .trim()
+              .replace(",", ".");
+            supplementValue = parseFloat(labelText) || 0;
+          }
         }
 
-        // 🟧 Prix du produit principal
-        let wcpqText = wcpq.textContent.trim().replace("€", "").trim();
-        const wcpqValue = parseFloat(wcpqText.replace(",", ".")) || 0;
+        // Prix du produit principal
+        let wcpqText = wcpq.textContent
+          .replace(/\s/g, "") //  retire tous les espaces (y compris insécables)
+          .replace("€", "")
+          .trim()
+          .replace(",", ".");
 
-        // 🟥 Total
+        const wcpqValue = parseFloat(wcpqText) || 0;
+
+        // Total
         const total = wcpqValue + supplementValue;
 
         // Format FR
@@ -148,24 +154,32 @@ function updateButtonPrice() {
 
         // Mettre à jour le bouton
         addToCartBtn.textContent = `Ajouter au panier - ${formatted}`;
-    }, 300);
-}
+      }, 300);
+    }
 
-// Exécution initiale
-updateButtonPrice();
+    // Exécution initiale
+    updateButtonPrice();
 
-// OBSERVATEURS WP-CPO
-const simpleContainer = document.querySelector(".wpcpo-total");
-if (simpleContainer) {
-    const obsSimple = new MutationObserver(updateButtonPrice);
-    obsSimple.observe(simpleContainer, { childList: true, subtree: true, characterData: true });
-}
+    // OBSERVATEURS WP-CPO
+    const simpleContainer = document.querySelector(".wpcpo-total");
+    if (simpleContainer) {
+      const obsSimple = new MutationObserver(updateButtonPrice);
+      obsSimple.observe(simpleContainer, {
+        childList: true,
+        subtree: true,
+        characterData: true
+      });
+    }
 
-const variableContainer = document.querySelector(".wpcpq-summary");
-if (variableContainer) {
-    const obsVariable = new MutationObserver(updateButtonPrice);
-    obsVariable.observe(variableContainer, { childList: true, subtree: true, characterData: true });
-}
+    const variableContainer = document.querySelector(".wpcpq-summary");
+    if (variableContainer) {
+      const obsVariable = new MutationObserver(updateButtonPrice);
+      obsVariable.observe(variableContainer, {
+        childList: true,
+        subtree: true,
+        characterData: true
+      });
+    }
 
 
   });
