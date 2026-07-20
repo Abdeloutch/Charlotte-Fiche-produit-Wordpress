@@ -1,0 +1,111 @@
+.wpcpo-wrapper .wpcpo-option label {
+    position: relative;
+    cursor: pointer;
+}
+
+.wpcpo-wrapper .wpcpo-option label::before {
+    display: none !important; 
+}
+
+.wpcpo-wrapper label input{
+	display: none !important;
+	appearance: none !important;
+}
+
+.wpcpo-wrapper label span{
+	display: none !important;
+}
+
+.wpcpq-table .wpcpq-item-active {
+	background-color: #cfcefd !important;
+}
+
+.wpcpo-total {
+	display: none !important;
+}
+
+.woocommerce .elementor-2438 .elementor-element.elementor-element-5dcf1d0e form.cart .variations{
+	width: 100% !important
+}
+
+.woocommerce .elementor-2438 .elementor-element.elementor-element-5dcf1d0e form.cart table.variations td.value select {
+	font-size: 17px;
+}
+
+.woocommerce-variation-price .price bdi {
+	display: none !important
+}
+
+.woocommerce .variations option:first-child, .reset_variations{
+	display: none !important
+}
+
+.archive .products .price {
+	display: none !important
+}
+
+.woocommerce form .form-row select {
+	padding-right: 0;
+}
+
+.elementor-widget-woocommerce-notices .woocommerce .is-error, .elementor-widget-woocommerce-notices .woocommerce .is-info, .elementor-widget-woocommerce-notices .woocommerce .is-success, .elementor-widget-woocommerce-notices .woocommerce-error, .elementor-widget-woocommerce-notices .woocommerce-info, .elementor-widget-woocommerce-notices .woocommerce-message, .elementor-widget-woocommerce-notices .woocommerce-notices-wrapper {
+	display: none;
+}
+
+.woocommerce-error, .woocommerce-info, .woocommerce-message {
+	display: none;
+}
+
+.woocommerce div.product div.images {
+	margin: 0;
+}
+
+.woocommerce ul.products li.product .button {
+	width: 100%;
+	text-align: center;
+}
+
+.elementor-menu-cart__main .elementor-menu-cart__product-price del bdi {
+	display: none !important
+}
+
+.woocommerce-product-details__short-description .woocommerce-loop-product__title {
+    display: none !important;
+}
+
+.woocommerce-product-details__short-description .woocommerce ul.products li.product .price {
+    display: none !important;
+}
+
+.woocommerce-product-details__short-description .woocommerce ul.products li.product .button {
+    display: none !important;
+}
+
+.woocommerce-product-details__short-description .woocommerce ul.products li.product a img {
+    margin: 0;
+}
+
+
+
+
+.wpcpo-option-select .wpcpo-option-field {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.wpcpo-option-select .wpcpo-option-form p.form-row {
+    position: relative;
+		font-size: 0px;
+		margin-top: 12px;
+}
+
+
+.wpcpo-options .wpcpo-frais-display{ 
+	font-weight: 600;
+	color: white;
+	padding-bottom: 8px;
+	text-transform: uppercase;
+	margin-bottom: 12px;
+	margin-top: 4px;
+}

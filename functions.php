@@ -11,14 +11,16 @@ add_action('wp_enqueue_scripts', function() {
         ['hello-elementor-style'],
         wp_get_theme()->get('Version')
     );
-    
-      wp_enqueue_script(
-        'add-to-cart-li', 
-        get_stylesheet_directory_uri() . '/js/add-to-cart-li.js', 
-        [], 
-         time(), 
-        true
-    );
+	
+	if (is_product()) {
+		wp_enqueue_script(
+			'wpcpo-custom-price', 
+			get_stylesheet_directory_uri() . '/js/wpcpo-custom-price.js', 
+			[], 
+			'1.6.5', 
+			true
+		);
+	  } 
 });
 
 
@@ -32,7 +34,6 @@ add_shortcode('afficher_marquage', function() {
     }
     return '';
 });
-
 
 
 add_filter('woocommerce_add_to_cart_validation', function($passed, $product_id, $quantity) {
@@ -92,3 +93,36 @@ add_filter('woocommerce_add_to_cart_validation', function($passed, $product_id, 
 }, 10, 3);
 
 
+// MISE A JOUR DU PANIER AUTO 
+add_filter('jpeg_quality', function($arg){ return 100 ; }) ;
+
+add_action( 'wp_footer', function() {
+    ?>
+    <script>
+    jQuery( function( $ ) {
+     let timeout;
+     $('.woocommerce').on( 'change', 'input.qty', function(){
+      if ( timeout !== undefined ) {
+       clearTimeout( timeout );
+      }
+      timeout = setTimeout(function() {
+       $("[name='update_cart']").trigger("click"); 
+      }, 500 ); 
+     });
+    } );
+    </script>
+    <?php
+});
+
+add_action( 'wp_footer', function() {
+    ?>
+    <script>
+    jQuery(document).on('updated_cart_totals wc_fragments_refreshed', function() {
+        var sections = jQuery('.e-cart-totals.e-cart-section');
+        if (sections.length > 1) {
+            sections.not(':first').remove();
+        }
+    });
+    </script>
+    <?php
+});
